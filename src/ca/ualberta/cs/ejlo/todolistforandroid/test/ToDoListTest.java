@@ -6,6 +6,7 @@ import ca.ualberta.cs.ejlo.todolistforandroid.ToDoList;
 import ca.ualberta.cs.ejlo.todolistforandroid.ToDoItem;
 
 import junit.framework.TestCase;
+import ca.ualberta.cs.ejlo.todolistforandroid.Listener;
 
 public class ToDoListTest extends TestCase {
 
@@ -45,6 +46,36 @@ public class ToDoListTest extends TestCase {
 		Collection<ToDoItem> toDoItems = toDoList.getToDoItems();
 		assertTrue("To do list size", toDoItems.size() == 0);
 		assertTrue("To do still contains test item", tempItem == testItem);
+	}
+	
+	boolean updated = false;
+	public void testNotifyListeners(){
+		ToDoList toDoList = new ToDoList();
+		Listener l = new Listener(){
+			public void update(){
+				ToDoListTest.this.updated = true;
+			}
+			
+		};
+		toDoList.addListener(l);
+		ToDoItem testItem = new ToDoItem("Get carpfish");
+		toDoList.addItem(testItem);
+		assertTrue("To do list did not notify listeners", this.updated);
+	}
+	
+	public void testRemoveListeners(){
+		ToDoList toDoList = new ToDoList();
+		Listener l = new Listener(){
+			public void update(){
+				ToDoListTest.this.updated = true;
+			}
+			
+		};
+		toDoList.addListener(l);
+		toDoList.removeListener(l);
+		ToDoItem testItem = new ToDoItem("Get carpfish");
+		toDoList.addItem(testItem);
+		assertFalse("To do list did not notify listeners", this.updated);
 	}
 	
 	//Remember to test for corner cases, like trying to remove something that does not exist
